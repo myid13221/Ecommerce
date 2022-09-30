@@ -50,74 +50,6 @@ class Cart
 	 */
 	private $items = [];
 
-	/**
-	 * Initialize cart.
-	 *
-	 * @param array $options
-	 */
-	public function __construct($options = [])
-	{
-		if (!session_id()) {
-			session_start();
-		}
-
-		if (isset($options['cartMaxItem']) && preg_match('/^\d+$/', $options['cartMaxItem'])) {
-			$this->cartMaxItem = $options['cartMaxItem'];
-		}
-
-		if (isset($options['itemMaxQuantity']) && preg_match('/^\d+$/', $options['itemMaxQuantity'])) {
-			$this->itemMaxQuantity = $options['itemMaxQuantity'];
-		}
-
-		if (isset($options['useCookie']) && $options['useCookie']) {
-			$this->useCookie = true;
-		}
-
-		$this->cartId = md5((isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : 'SimpleCart') . '_cart';
-
-
-
-
-		$this->read();
-	}
-
-	/**
-	 * Get items in  cart.
-	 *
-	 * @return array
-	 */
-	public function getItems()
-	{
-		return $this->items;
-	}
-
-	/**
-	 * Check if the cart is empty.
-	 *
-	 * @return bool
-	 */
-	public function isEmpty()
-	{
-		return empty(array_filter($this->items));
-	}
-
-	/**
-	 * Get the total of item in cart.
-	 *
-	 * @return int
-	 */
-	public function getTotalItem()
-	{
-		$total = 0;
-
-		foreach ($this->items as $items) {
-			foreach ($items as $item) {
-				++$total;
-			}
-		}
-
-		return $total;
-	}
 
 	/**
 	 * Get the total of item quantity in cart.
@@ -331,17 +263,5 @@ class Cart
 	private function read()
 	{
 		$this->items = ($this->useCookie) ? json_decode((isset($_COOKIE[$this->cartId])) ? $_COOKIE[$this->cartId] : '[]', true) : json_decode((isset($_SESSION[$this->cartId])) ? $_SESSION[$this->cartId] : '[]', true);
-	}
-
-	/**
-	 * Write changes into cart session.
-	 */
-	private function write()
-	{
-		if ($this->useCookie) {
-			setcookie($this->cartId, json_encode(array_filter($this->items)), time() + 604800);
-		} else {
-			$_SESSION[$this->cartId] = json_encode(array_filter($this->items));
-		}
 	}
 }
