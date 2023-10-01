@@ -56,30 +56,18 @@ class Cart
 	 * @param array $options
 	 */
 	public function __construct($options = [])
-	{
+        {
 		if (!session_id()) {
-			session_start();
+		    session_start();
 		}
-
-		if (isset($options['cartMaxItem']) && preg_match('/^\d+$/', $options['cartMaxItem'])) {
-			$this->cartMaxItem = $options['cartMaxItem'];
-		}
-
-		if (isset($options['itemMaxQuantity']) && preg_match('/^\d+$/', $options['itemMaxQuantity'])) {
-			$this->itemMaxQuantity = $options['itemMaxQuantity'];
-		}
-
-		if (isset($options['useCookie']) && $options['useCookie']) {
-			$this->useCookie = true;
-		}
-
-		$this->cartId = md5((isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : 'SimpleCart') . '_cart';
-
-
-
-
+	
+		$this->cartMaxItem = isset($options['cartMaxItem']) && is_numeric($options['cartMaxItem']) ? $options['cartMaxItem'] : $this->cartMaxItem;
+		$this->itemMaxQuantity = isset($options['itemMaxQuantity']) && is_numeric($options['itemMaxQuantity']) ? $options['itemMaxQuantity'] : $this->itemMaxQuantity;
+		$this->useCookie = isset($options['useCookie']) && $options['useCookie'];
+	
+		$this->cartId = md5(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'SimpleCart') . '_cart';
 		$this->read();
-	}
+        }
 
 	/**
 	 * Get items in  cart.
