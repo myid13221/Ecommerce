@@ -56,43 +56,38 @@ $sql = "SELECT products.*, categories.category_name FROM `products` INNER JOIN c
 
 // Shopping Cart Page
 
-	$cartContents = '
-	<div class="alert alert-warning">
-		<i class="fa fa-info-circle"></i> There are no items in the cart.
-	</div>';
-
+	$cartContents = '<div class="alert alert-warning">
+	    			<i class="fa fa-info-circle"></i> There are no items in the cart.
+			</div>';
+	
 	// Empty the cart
 	if (isset($_POST['empty'])) {
-		$cart->clear();
+	    $cart->clear();
 	}
-
+	
 	// Add item
 	if (isset($_POST['add'])) {
-		foreach ($products as $product) {
-			if ($_POST['id'] == $product->product_id) {
-				break;
-			}
-		}
-
-		$cart->add($product->product_id, $_POST['qty'], [
-			'price' => $product->product_price,
-			//'color' => (isset($_POST['color'])) ? $_POST['color'] : '',
-		]);
+	    $selectedProduct = null;
+	
+	    foreach ($products as $product) {
+	        if ($_POST['id'] == $product->product_id) {
+	            $selectedProduct = $product;
+	            break;
+	        }
+	    }
+	
+	    if ($selectedProduct !== null) {
+	        $cart->add(
+	            $selectedProduct->product_id,
+	            $_POST['qty'],
+	            [
+	                'price' => $selectedProduct->product_price,
+	                //'color' => (isset($_POST['color'])) ? $_POST['color'] : '',
+	            ]
+	        );
+	    }
 	}
 
-	// Update item
-	if (isset($_POST['update'])) {
-		foreach ($products as $product) {
-			if ($_POST['id'] == $product->product_id) {
-				break;
-			}
-		}
-
-		$cart->update($product->product_id, $_POST['qty'], [
-			'price' => $product->product_price,
-			//'color' => (isset($_POST['color'])) ? $_POST['color'] : '',
-		]);
-	}
 
 	// Remove item
 	if (isset($_POST['remove'])) {
